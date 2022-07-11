@@ -2,6 +2,7 @@ import React from "react";
 import './ImageLinkForm.css';
  
 const ImageLinkForm = ()=> {
+    console.log("");
     return(
         <div>
            <p className="f3">
