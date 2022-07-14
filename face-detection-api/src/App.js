@@ -1,11 +1,20 @@
 import React, {Component} from 'react';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import {ClarifaiStub, grpc} from "clarifai-nodejs-grpc";
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import './App.css';
+
+
+
+const stub = ClarifaiStub.grpc();
+
+// This will be used by every Clarifai endpoint call.
+const metadata = new grpc.Metadata();
+metadata.set("authorization", "Key {15acf4f41ad34709a5ee9c4729e3eb6b}");
 
 const particlesOptions= { 
   fpsLimit: 120,
@@ -89,7 +98,29 @@ const particlesLoaded = (container) => {
 };
 
 class App extends Component{
-  
+  constructor(){
+    super();
+    this.state = {
+      input:'',
+    }
+  }
+
+  onInputChange =(event)=>{
+    console.log(event.target.value)
+  }
+
+  onButtonSubmit = ()=>{
+    console.log('click');
+    metadata.models.predict("15acf4f41ad34709a5ee9c4729e3eb6b","https://www.newscientist.com/article/2308312-fake-faces-created-by-ai-look-more-trustworthy-than-real-people/").
+    then( 
+      function(response){
+        console.log(response)
+      },
+      function(err){
+
+      }
+      );
+  }
   render(){
    
     return (
@@ -97,16 +128,16 @@ class App extends Component{
        <Navigation />
          <Logo />
          <Rank/>
-         <ImageLinkForm/>
+         <ImageLinkForm 
+         onInputChange={this.onInputChange}
+         onButtonSubmit={this.onButtonSubmit}/>
          <Particles className='particles'
       id="tsparticles"
       init={particlesInit}
       loaded={particlesLoaded}
       options={particlesOptions}
     />
-
-         {/*
-        <FaceRecognition/> */}
+      {/* <FaceRecognition/> */}
         
       </div>
     );
