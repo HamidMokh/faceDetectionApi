@@ -100,23 +100,46 @@ class App extends Component{
     super();
     this.state = {
       input:'',
+      imageUrl:'',
+      box:{},
     }
   }
   
 
-  onInputChange =(event)=>{
-    console.log(event.target.value)
+  displayFaceBox = (box) => {
+    this.setState({box: box});
+  }
+
+  onInputChange = (event) => {
+    this.setState({input: event.target.value});
   }
 
   onButtonSubmit = ()=>{
-    console.log('click');
-    app.models.predict(Clarifai.FACE_DETECT_MODEL,"https://samples.clarifai.com/face-det.jpg").then( 
-      function(response){
-        console.log(response)
-      },
-      function(err){
-      }
-      );
+    this.setState({imageUrl: this.state.input});
+    app.models
+    .predict(
+      Clarifai.FACE_DETECT_MODEL,
+      this.state.input)
+      .then(response => {
+        console.log('hi', response)
+        if (response) {
+          fetch('http://localhost:3000/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              id: this.state.user.id
+            })
+          })
+            .then(response => response.json())
+            .then(count => {
+              this.setState(Object.assign(this.state.user, { entries: count}))
+            })
+
+        }
+        this.displayFaceBox(this.calculateFaceLocation(response))
+      })
+      .catch(err => console.log(err));
+   
   }
   render(){
    
@@ -134,7 +157,7 @@ class App extends Component{
       loaded={particlesLoaded}
       options={particlesOptions}
     />
-      <FaceRecognition/>
+      <FaceRecognition imageUrl={this.state.imageUrl}/>
         
       </div>
     );
