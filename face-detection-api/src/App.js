@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-// import {ClarifaiStub, grpc} from "clarifai-nodejs-grpc";
+import Clarifai from 'clarifai';
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
@@ -9,12 +9,9 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 
 
-
-// const stub = ClarifaiStub.grpc();
-
-// // This will be used by every Clarifai endpoint call.
-// const metadata = new grpc.Metadata();
-// metadata.set("authorization", "Key {15acf4f41ad34709a5ee9c4729e3eb6b}");
+const app = new Clarifai.App({
+  apiKey: '15acf4f41ad34709a5ee9c4729e3eb6b'
+ });
 
 const particlesOptions= { 
   fpsLimit: 120,
@@ -84,8 +81,8 @@ const particlesOptions= {
    
  }
 
-const particlesInit = async (main) => {
-  console.log(main);
+ const particlesInit = async (main) => {
+  // console.log(main);
 
   // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
   // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
@@ -94,7 +91,7 @@ const particlesInit = async (main) => {
 };
 
 const particlesLoaded = (container) => {
-  console.log(container);
+  // console.log(container);
 };
 
 class App extends Component{
@@ -104,23 +101,22 @@ class App extends Component{
       input:'',
     }
   }
+  
 
   onInputChange =(event)=>{
     console.log(event.target.value)
   }
 
-  // onButtonSubmit = ()=>{
-  //   console.log('click');
-  //   metadata.models.predict("15acf4f41ad34709a5ee9c4729e3eb6b","https://www.newscientist.com/article/2308312-fake-faces-created-by-ai-look-more-trustworthy-than-real-people/").
-  //   then( 
-  //     function(response){
-  //       console.log(response)
-  //     },
-  //     function(err){
-
-  //     }
-  //     );
-  // }
+  onButtonSubmit = ()=>{
+    console.log('click');
+    app.models.predict(Clarifai.FACE_DETECT_MODEL,"https://samples.clarifai.com/face-det.jpg").then( 
+      function(response){
+        console.log(response)
+      },
+      function(err){
+      }
+      );
+  }
   render(){
    
     return (
