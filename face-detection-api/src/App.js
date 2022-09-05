@@ -103,6 +103,7 @@ class App extends Component{
       input:'',
       imageUrl:'',
       box:{},
+      route: 'signin'
     }
   }
 
@@ -161,8 +162,10 @@ class App extends Component{
     return (
       <div className="App">
        <Navigation/>
-         <Logo />
-         <Signin />
+     {   
+     this.state.route ==='signin'
+        ?<Signin />
+        : <div><Logo />
          <Rank/>
          <ImageLinkForm 
          onInputChange={this.onInputChange}
@@ -174,6 +177,8 @@ class App extends Component{
       options={particlesOptions}
     />
       <FaceRecognition box= {this.state.box} imageUrl={this.state.imageUrl}/>
+      </div>
+      }
         
       </div>
     );
